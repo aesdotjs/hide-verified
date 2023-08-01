@@ -60,6 +60,7 @@ function hideVerifiedTweets() {
         return;
       }
       const tweetText = tweetElement.querySelector('[data-testid="tweetText"]');
+      if (!tweetText) return;
       const tweetContainer = tweetText.parentNode;
       if (tweetContainer) {
         if (tweetContainer.dataset.unblur || tweetContainer.dataset.blurred) {
