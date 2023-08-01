@@ -6,7 +6,7 @@ Cette extension masque les messages des comptes vérifiés de Twitter
 
 1. Clonez ce dépôt ou téléchargez-le sous forme de fichier zip.
 2. Allez à `chrome://extensions` et activez le mode développeur.
-3. Cliquez sur `Load Unpacked` et sélectionnez le dossier où vous avez cloné/téléchargé ce dépôt.
+3. Cliquez sur `Charger l'extension non empaquetée` et sélectionnez le dossier où vous avez cloné/téléchargé ce dépôt.
 4. Ouvrez twitter.com et profitez-en.
 
 ## Comment mettre à jour cette extension?
