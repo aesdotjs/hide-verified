@@ -71,9 +71,9 @@ function hideVerifiedTweets() {
         // instead I want a div with the text and a div with a button to toggle the user in the whitelist
         // append the divs to the blurMask
         let blurMaskText = document.createElement("div");
-        blurMaskText.innerHTML = "Cliquez pour afficher le tweet";
+        blurMaskText.innerHTML = "Click to show";
         let blurMaskButton = document.createElement("div");
-        blurMaskButton.innerHTML = "Ajouter à la whitelist";
+        blurMaskButton.innerHTML = "Add to whitelist";
         blurMaskButton.style.padding = "5px";
         blurMaskButton.style.border = "1px solid black";
         blurMaskButton.style.borderRadius = "5px";
