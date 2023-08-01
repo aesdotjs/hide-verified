@@ -60,30 +60,33 @@ function hideVerifiedTweets() {
         return;
       }
       const tweetText = tweetElement.querySelector('[data-testid="tweetText"]');
-      if (tweetText) {
-        if (tweetText.dataset.unblur || tweetText.dataset.blurred) {
+      const tweetContainer = tweetText.parentNode;
+      if (tweetContainer) {
+        if (tweetContainer.dataset.unblur || tweetContainer.dataset.blurred) {
           return;
         }
-        const parentSibling = tweetText.parentNode.nextSibling;
         // Create a blur mask for the tweet
         let blurMask = document.createElement("div");
-        tweetText.dataset.blurred = true;
+        tweetContainer.dataset.blurred = true;
         function unblur() {
           blurMask.style.display = 'none';
-          tweetText.dataset.unblur = true;
-          tweetText.style.filter = "none";
-          parentSibling.style.filter = "none";
+          tweetContainer.dataset.unblur = true;
+          tweetContainer.style.filter = "none";
+          if (tweetContainer.nextSibling) tweetContainer.nextSibling.style.filter = "none";
+          if (tweetContainer.parentNode.nextSibling) tweetContainer.parentNode.nextSibling.style.filter = "none";
         }
         // blurMask.innerHTML = "Cliquez pour afficher le tweet";
         // instead I want a div with the text and a div with a button to toggle the user in the whitelist
         // append the divs to the blurMask
         let blurMaskText = document.createElement("div");
         blurMaskText.innerHTML = "Click to show";
+        blurMaskText.style.textShadow = "-1px -1px 0 white, 1px -1px 0 white, -1px 1px 0 white, 1px 1px 0 white";
         let blurMaskButton = document.createElement("div");
         blurMaskButton.innerHTML = "Add to whitelist";
-        blurMaskButton.style.padding = "5px";
-        blurMaskButton.style.border = "1px solid black";
-        blurMaskButton.style.borderRadius = "5px";
+        blurMaskButton.style.padding = "0.75rem 1.5rem";
+        blurMaskButton.style.borderRadius = "999px";
+        blurMaskButton.style.backgroundColor = "rgb(29, 155, 240)";
+        blurMaskButton.style.color = "white";
         blurMaskButton.style.cursor = "pointer";
         blurMaskButton.onclick = function(e) {
           e.preventDefault();
@@ -97,13 +100,15 @@ function hideVerifiedTweets() {
         blurMask.style.textAlign = "center";
         blurMask.style.zIndex = "1000";
         blurMask.style.display = "flex";
-        blurMask.style.gap = "10px";
+        blurMask.style.gap = "2rem";
         blurMask.style.fontWeight = "bold";
+        blurMask.style.fontFamily = "'TwitterChirp',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
         blurMask.style.justifyContent = "center";
         blurMask.style.alignItems = "center";
         // blur filter
-        tweetText.style.filter = "blur(10px)";
-        parentSibling.style.filter = "blur(10px)";
+        tweetContainer.style.filter = "blur(10px)";
+        if (tweetContainer.nextSibling) tweetContainer.nextSibling.style.filter = "blur(10px)";
+        if (tweetContainer.parentNode.nextSibling) tweetContainer.parentNode.nextSibling.style.filter = "blur(10px)";
         blurMask.style.top = "0";
         blurMask.style.left = "0";
         blurMask.style.width = "100%";
@@ -116,8 +121,8 @@ function hideVerifiedTweets() {
         };
         
         // Append the mask to the tweet text
-        tweetText.parentNode.style.position = "relative";
-        tweetText.parentNode.appendChild(blurMask);
+        tweetContainer.parentNode.style.position = "relative";
+        tweetContainer.parentNode.appendChild(blurMask);
       }
     }
   });
