@@ -51,8 +51,8 @@ function hideVerifiedTweets() {
         };
         
         // Append the mask to the tweet text
-        tweetText.style.position = "relative";
-        tweetText.appendChild(blurMask);
+        tweetText.parentNode.style.position = "relative";
+        tweetText.parentNode.appendChild(blurMask);
       }
     }
   });
