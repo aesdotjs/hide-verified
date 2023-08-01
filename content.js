@@ -64,9 +64,16 @@ function hideVerifiedTweets() {
         if (tweetText.dataset.unblur || tweetText.dataset.blurred) {
           return;
         }
+        const parentSibling = tweetText.parentNode.nextSibling;
         // Create a blur mask for the tweet
         let blurMask = document.createElement("div");
         tweetText.dataset.blurred = true;
+        function unblur() {
+          blurMask.style.display = 'none';
+          tweetText.dataset.unblur = true;
+          tweetText.style.filter = "none";
+          parentSibling.style.filter = "none";
+        }
         // blurMask.innerHTML = "Cliquez pour afficher le tweet";
         // instead I want a div with the text and a div with a button to toggle the user in the whitelist
         // append the divs to the blurMask
@@ -82,9 +89,7 @@ function hideVerifiedTweets() {
           e.preventDefault();
           e.stopPropagation();
           toggleWhitelistUser(username);
-          blurMask.style.display = 'none';
-          tweetText.dataset.unblur = true;
-          tweetText.style.filter = "none";
+          unblur();
         };
         blurMask.appendChild(blurMaskText);
         blurMask.appendChild(blurMaskButton);
@@ -98,6 +103,7 @@ function hideVerifiedTweets() {
         blurMask.style.alignItems = "center";
         // blur filter
         tweetText.style.filter = "blur(10px)";
+        parentSibling.style.filter = "blur(10px)";
         blurMask.style.top = "0";
         blurMask.style.left = "0";
         blurMask.style.width = "100%";
@@ -106,9 +112,7 @@ function hideVerifiedTweets() {
         blurMask.onclick = function(e) {
           e.preventDefault();
           e.stopPropagation();
-          blurMask.style.display = 'none';
-          tweetText.dataset.unblur = true;
-          tweetText.style.filter = "none";
+          unblur();
         };
         
         // Append the mask to the tweet text
