@@ -46,10 +46,6 @@ function hideVerifiedTweets() {
         userNameElement = tweetElement.querySelector('[data-testid="User-Name"] a');
         if(userNameElement) {
           username = userNameElement.getAttribute('href').substring(1); // Remove the initial "/"
-          if(whitelist[username]) {
-            // If the user is in the whitelist, skip hiding the tweet
-            return;
-          }
         }
       } else { // QRT
         //find the pattern @...</span> in the tweetElement innerHTML to extract the username
@@ -57,11 +53,11 @@ function hideVerifiedTweets() {
         let usernameMatch = usernamePattern.exec(tweetElement.innerHTML);
         if (usernameMatch) {
           username = usernameMatch[1];
-          if(whitelist[username]) {
-            // If the user is in the whitelist, skip hiding the tweet
-            return;
-          }
         }
+      }
+      if(whitelist[username]) {
+        // If the user is in the whitelist, skip hiding the tweet
+        return;
       }
       const tweetText = tweetElement.querySelector('[data-testid="tweetText"]');
       if (tweetText) {
