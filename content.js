@@ -15,7 +15,6 @@ function hideVerifiedTweets() {
     let tweetElement = icon;
     // Traverse up the DOM to find the parent tweet element stop if data-testid="tweet" or if the element is a div with role="link"
     while (tweetElement && tweetElement.dataset.testid !== "tweet" && !(tweetElement.role === "link" && tweetElement.nodeName === "DIV")) {
-      console.log(tweetElement.role, tweetElement.nodeName);
       tweetElement = tweetElement.parentElement;
     }
     // Hide the tweet text if it's a tweet from a verified user
