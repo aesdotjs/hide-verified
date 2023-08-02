@@ -6,6 +6,7 @@ window.onload = function() {
     hideVerifiedTweets();
   }, 1000);
 };
+
 let whitelist = {};
 
 chrome.storage.sync.get(['whitelist'], function(result) {
@@ -28,57 +29,101 @@ function toggleWhitelistUser(username) {
   });
 }
 
+function unblur(tweetContainer, blurMask, existingMask) {
+  blurMask.style.display = 'none';
+  
+  if (existingMask) {
+    existingMask.style.display = 'none';
+  }
+
+  tweetContainer.dataset.unblur = true;
+  tweetContainer.style.filter = "none";
+  if (tweetContainer.nextSibling) tweetContainer.nextSibling.style.filter = "none";
+  if (tweetContainer.parentNode.nextSibling) tweetContainer.parentNode.nextSibling.style.filter = "none";
+}
+
+function handleWhitelistedUser(username, tweetContainer, existingMask, blurMask) {
+  if (whitelist[username]) {
+    if (tweetContainer.dataset.blurred) {
+      unblur(tweetContainer, blurMask, existingMask);
+    }
+    return true;
+  } else {
+    return false;
+  }
+}
+
 function hideVerifiedTweets() {
-  // Find all verified icons
   const verifiedIcons = Array.from(document.querySelectorAll('[data-testid="icon-verified"]'));
-  // For each verified icon, find the parent tweet and hide its text
+
   verifiedIcons.forEach(icon => {
     let tweetElement = icon;
-    // Traverse up the DOM to find the parent tweet element stop if data-testid="tweet" or if the element is a div with role="link"
+    let likeElement = null;
+
     while (tweetElement && tweetElement.dataset.testid !== "tweet" && !(tweetElement.role === "link" && tweetElement.nodeName === "DIV")) {
       tweetElement = tweetElement.parentElement;
     }
-    // Hide the tweet text if it's a tweet from a verified user
+
     if (tweetElement) {
       let userNameElement;
       let username = null;
+
       if (tweetElement.dataset.testid === "tweet") {
         userNameElement = tweetElement.querySelector('[data-testid="User-Name"] a');
         if(userNameElement) {
-          username = userNameElement.getAttribute('href').substring(1); // Remove the initial "/"
+          username = userNameElement.getAttribute('href').substring(1);
         }
-      } else { // QRT
-        //find the pattern @...</span> in the tweetElement innerHTML to extract the username
+        likeElement = tweetElement.querySelector('[data-testid="like"]');
+      } else {
         let usernamePattern = /@([^<]*)<\/span>/;
         let usernameMatch = usernamePattern.exec(tweetElement.innerHTML);
         if (usernameMatch) {
           username = usernameMatch[1];
         }
       }
-      if(whitelist[username]) {
-        // If the user is in the whitelist, skip hiding the tweet
-        return;
-      }
+
       const tweetText = tweetElement.querySelector('[data-testid="tweetText"]');
       if (!tweetText) return;
       const tweetContainer = tweetText.parentNode;
       if (tweetContainer) {
-        if (tweetContainer.dataset.unblur || tweetContainer.dataset.blurred) {
+        let existingMask = tweetContainer.parentNode.querySelector(".blur-mask");
+        let blurMask = document.createElement("div");
+        blurMask.classList.add("blur-mask");
+
+        if(likeElement) {
+          const parent = likeElement.parentNode;
+          if(parent) {
+            let existingButton = parent.parentNode.querySelector(".toggle-whitelist-user");
+            if (existingButton) {
+              existingButton.innerHTML = whitelist[username] ? "👁️" : "👓";
+            } else {
+              let toggleButton = document.createElement("div");
+              toggleButton.classList.add("toggle-whitelist-user");
+              toggleButton.style.display = "flex";
+              toggleButton.style.alignItems = "center";
+              toggleButton.style.userSelect = "none";
+              toggleButton.style.cursor = "pointer";
+              toggleButton.innerHTML = whitelist[username] ? "👁️" : "👓";
+
+              toggleButton.onclick = function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                tweetContainer.dataset.unblur = false;
+                toggleWhitelistUser(username);
+                toggleButton.innerHTML = whitelist[username] ? "👁️" : "👓";
+              }
+              parent.parentNode.insertBefore(toggleButton, likeElement.nextSibling);
+            }
+          }
+        }
+
+        if (handleWhitelistedUser(username, tweetContainer, existingMask, blurMask)) {
           return;
         }
-        // Create a blur mask for the tweet
-        let blurMask = document.createElement("div");
-        tweetContainer.dataset.blurred = true;
-        function unblur() {
-          blurMask.style.display = 'none';
-          tweetContainer.dataset.unblur = true;
-          tweetContainer.style.filter = "none";
-          if (tweetContainer.nextSibling) tweetContainer.nextSibling.style.filter = "none";
-          if (tweetContainer.parentNode.nextSibling) tweetContainer.parentNode.nextSibling.style.filter = "none";
+        if(((tweetContainer.dataset.blurred || tweetContainer.dataset.blurred === 'true') && tweetContainer.style.filter === "blur(10px)") || (tweetContainer.dataset.unblur === true || tweetContainer.dataset.unblur === 'true')) {
+          return;
         }
-        // blurMask.innerHTML = "Cliquez pour afficher le tweet";
-        // instead I want a div with the text and a div with a button to toggle the user in the whitelist
-        // append the divs to the blurMask
+        tweetContainer.dataset.blurred = true;
         let blurMaskText = document.createElement("div");
         blurMaskText.innerHTML = "Click to show";
         blurMaskText.style.textShadow = "-1px -1px 0 white, 1px -1px 0 white, -1px 1px 0 white, 1px 1px 0 white";
@@ -93,7 +138,7 @@ function hideVerifiedTweets() {
           e.preventDefault();
           e.stopPropagation();
           toggleWhitelistUser(username);
-          unblur();
+          unblur(tweetContainer, blurMask, existingMask);
         };
         blurMask.appendChild(blurMaskText);
         blurMask.appendChild(blurMaskButton);
@@ -106,7 +151,6 @@ function hideVerifiedTweets() {
         blurMask.style.fontFamily = "'TwitterChirp',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
         blurMask.style.justifyContent = "center";
         blurMask.style.alignItems = "center";
-        // blur filter
         tweetContainer.style.filter = "blur(10px)";
         if (tweetContainer.nextSibling) tweetContainer.nextSibling.style.filter = "blur(10px)";
         if (tweetContainer.parentNode.nextSibling) tweetContainer.parentNode.nextSibling.style.filter = "blur(10px)";
@@ -118,10 +162,13 @@ function hideVerifiedTweets() {
         blurMask.onclick = function(e) {
           e.preventDefault();
           e.stopPropagation();
-          unblur();
+          unblur(tweetContainer, blurMask, existingMask);
         };
-        
-        // Append the mask to the tweet text
+
+        if (existingMask) {
+          existingMask.remove();
+        }
+
         tweetContainer.parentNode.style.position = "relative";
         tweetContainer.parentNode.appendChild(blurMask);
       }
