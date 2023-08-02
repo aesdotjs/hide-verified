@@ -95,7 +95,7 @@ function hideVerifiedTweets() {
           if(parent) {
             let existingButton = parent.parentNode.querySelector(".toggle-whitelist-user");
             if (existingButton) {
-              existingButton.innerHTML = whitelist[username] ? "👁️" : "👓";
+              existingButton.textContent = whitelist[username] ? "👁️" : "👓";
             } else {
               let toggleButton = document.createElement("div");
               toggleButton.classList.add("toggle-whitelist-user");
@@ -103,14 +103,14 @@ function hideVerifiedTweets() {
               toggleButton.style.alignItems = "center";
               toggleButton.style.userSelect = "none";
               toggleButton.style.cursor = "pointer";
-              toggleButton.innerHTML = whitelist[username] ? "👁️" : "👓";
+              toggleButton.textContent = whitelist[username] ? "👁️" : "👓";
 
               toggleButton.onclick = function(e) {
                 e.preventDefault();
                 e.stopPropagation();
                 tweetContainer.dataset.unblur = false;
                 toggleWhitelistUser(username);
-                toggleButton.innerHTML = whitelist[username] ? "👁️" : "👓";
+                toggleButton.textContent = whitelist[username] ? "👁️" : "👓";
               }
               parent.parentNode.insertBefore(toggleButton, likeElement.nextSibling);
             }
@@ -125,10 +125,10 @@ function hideVerifiedTweets() {
         }
         tweetContainer.dataset.blurred = true;
         let blurMaskText = document.createElement("div");
-        blurMaskText.innerHTML = "Click to show";
+        blurMaskText.textContent = "Click to show";
         blurMaskText.style.textShadow = "-1px -1px 0 white, 1px -1px 0 white, -1px 1px 0 white, 1px 1px 0 white";
         let blurMaskButton = document.createElement("div");
-        blurMaskButton.innerHTML = "Add to whitelist";
+        blurMaskButton.textContent = "Add to whitelist";
         blurMaskButton.style.padding = "0.75rem 1.5rem";
         blurMaskButton.style.borderRadius = "999px";
         blurMaskButton.style.backgroundColor = "rgb(29, 155, 240)";
