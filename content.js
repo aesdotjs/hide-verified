@@ -1,11 +1,21 @@
-window.onload = function() {
-  hideVerifiedTweets();
+// update on infinite scroll
+const targetNode = document.body;
+const config = { attributes: true, childList: true, subtree: true };
 
-  // Handle dynamic loading of tweets
-  setInterval(function() {
-    hideVerifiedTweets();
-  }, 1000);
+// Callback function to execute when mutations are observed
+const callback = function(mutationsList, observer) {
+  for(let mutation of mutationsList) {
+    if (mutation.type === 'childList') {
+      hideVerifiedTweets();
+    }
+  }
 };
+
+// Create an observer instance linked to the callback function
+const observer = new MutationObserver(callback);
+
+// Start observing the target node for configured mutations
+observer.observe(targetNode, config);
 
 let whitelist = {};
 
