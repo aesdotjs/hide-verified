@@ -16,6 +16,10 @@ Cette extension masque les messages des comptes vérifiés de Twitter
 3. Tirez les modifications de ce dépôt.
 4. Allez à `chrome://extensions` et activez l'extension.
 
+## Confidentialité
+
+Hide verified tweet fonctionne entièrement dans votre navigateur. Aucune donnée n'est collectée ou suivie par Hide verified tweet directement lorsque vous l'utilisez ou l'installez. Les installations d'extensions de navigateur peuvent être suivies par Google et Mozilla, et les demandes de données faites à Twitter peuvent être suivies par Twitter.
+
 ## Description
 
 This extension hides the message from twitters verified accounts
@@ -34,3 +38,7 @@ This extension hides the message from twitters verified accounts
 3. Pull the changes from this repository.
 4. Go to `chrome://extensions` and enable the extension.
 
+### Privacy
+
+Hide verified tweet runs entirely in your browser. No data is collected or tracked by Hide verified tweet directly when you use or install it. Browser extension installs may be tracked by Google and Mozilla, and the data
+requests made to Twitter may be tracked by Twitter.
